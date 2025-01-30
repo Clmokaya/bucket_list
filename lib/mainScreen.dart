@@ -15,23 +15,70 @@ class mainScreen extends StatefulWidget {
 class _mainScreenState extends State<mainScreen> {
   List<dynamic> bucketListData = [];
   bool isLoading = false;
+  bool isError = false;
 
   Future<void> getData() async {
     setState(() {
       isLoading = true;
     });
-    Response response = await Dio().get(
-        "https://flutter002-1d47e-default-rtdb.firebaseio.com/bucketlist.json");
-    bucketListData = response.data;
-    isLoading = false;
+    try {
+      Response response = await Dio().get(
+          "https://flutter002-1d47e-default-rtdb.firebaseio.com/bucketlist.json");
+      bucketListData = response.data;
+      isLoading = false;
+      isError = false;
 
-    setState(() {});
+      setState(() {});
+    } catch (e) {
+      isLoading = false;
+      isError = false;
+      setState(() {});
+    }
   }
 
   @override
   void initState() {
     getData();
     super.initState();
+  }
+
+  Widget errorWidget({required String errorText}) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.warning),
+          Text(errorText),
+          ElevatedButton(onPressed: () {}, child: Text('try again'))
+        ],
+      ),
+    );
+  }
+
+  Widget listDataWidget() {
+    return ListView.builder(
+        itemCount: bucketListData.length,
+        itemBuilder: (BuildContext context, int index) {
+          return Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: ListTile(
+              onTap: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) {
+                  return viewItemScreen(
+                    title: bucketListData[index]['item'] ?? "",
+                    image: bucketListData[index]['image'] ?? "",
+                  );
+                }));
+              },
+              leading: CircleAvatar(
+                backgroundImage:
+                    NetworkImage(bucketListData[index]['image'] ?? ""),
+              ),
+              title: Text(bucketListData[index]['item'] ?? ""),
+              trailing: Text(bucketListData[index]['cost'].toString() ?? ""),
+            ),
+          );
+        });
   }
 
   @override
@@ -63,31 +110,9 @@ class _mainScreenState extends State<mainScreen> {
         },
         child: isLoading
             ? Center(child: CircularProgressIndicator())
-            : ListView.builder(
-                itemCount: bucketListData.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: ListTile(
-                      onTap: () {
-                        Navigator.push(context,
-                            MaterialPageRoute(builder: (context) {
-                          return viewItemScreen(
-                            title: bucketListData[index]['item'] ?? "",
-                            image: bucketListData[index]['image'] ?? "",
-                          );
-                        }));
-                      },
-                      leading: CircleAvatar(
-                        backgroundImage:
-                            NetworkImage(bucketListData[index]['image'] ?? ""),
-                      ),
-                      title: Text(bucketListData[index]['item'] ?? ""),
-                      trailing:
-                          Text(bucketListData[index]['cost'].toString() ?? ""),
-                    ),
-                  );
-                }),
+            : isError
+                ? errorWidget(errorText: "error connecting...")
+                : listDataWidget(),
       ),
     );
   }
