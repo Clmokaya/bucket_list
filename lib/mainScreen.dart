@@ -24,7 +24,12 @@ class _mainScreenState extends State<mainScreen> {
     try {
       Response response = await Dio().get(
           "https://flutter002-1d47e-default-rtdb.firebaseio.com/bucketlist.json");
-      bucketListData = response.data;
+
+      if (response.data is List) {
+        bucketListData = response.data;
+      } else {
+        bucketListData = [];
+      }
       isLoading = false;
       isError = false;
 
@@ -105,15 +110,16 @@ class _mainScreenState extends State<mainScreen> {
         ],
       ),
       body: RefreshIndicator(
-        onRefresh: () async {
-          getData();
-        },
-        child: isLoading
-            ? Center(child: CircularProgressIndicator())
-            : isError
-                ? errorWidget(errorText: "error connecting...")
-                : listDataWidget(),
-      ),
+          onRefresh: () async {
+            getData();
+          },
+          child: isLoading
+              ? Center(child: CircularProgressIndicator())
+              : isError
+                  ? errorWidget(errorText: "error connecting...")
+                  : bucketListData.length < 1
+                      ? Center(child: Text('No data on bucket list'))
+                      : listDataWidget()),
     );
   }
 }
