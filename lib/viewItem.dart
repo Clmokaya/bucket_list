@@ -3,7 +3,12 @@ import 'package:flutter/material.dart';
 class viewItemScreen extends StatefulWidget {
   String title;
   String image;
-  viewItemScreen({super.key, required this.title, required this.image});
+  int index;
+  viewItemScreen(
+      {super.key,
+      required this.title,
+      required this.index,
+      required this.image});
 
   @override
   State<viewItemScreen> createState() => _viewItemScreenState();
@@ -45,6 +50,7 @@ class _viewItemScreenState extends State<viewItemScreen> {
       ),
       body: Column(
         children: [
+          Text(widget.index.toString()),
           Container(
             height: 300,
             width: double.infinity,
