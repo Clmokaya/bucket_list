@@ -76,7 +76,11 @@ class _mainScreenState extends State<mainScreen> {
                           title: bucketListData[index]['item'] ?? "",
                           image: bucketListData[index]['image'] ?? "",
                         );
-                      }));
+                      })).then((value) {
+                        if (value == "refresh") {
+                          getData();
+                        }
+                      });
                     },
                     leading: CircleAvatar(
                       backgroundImage:

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:dio/dio.dart';
 
 class viewItemScreen extends StatefulWidget {
   String title;
@@ -15,6 +16,30 @@ class viewItemScreen extends StatefulWidget {
 }
 
 class _viewItemScreenState extends State<viewItemScreen> {
+  Future<void> deleteData() async {
+    Navigator.pop(context);
+    try {
+      Response response = await Dio().delete(
+          "https://flutter002-1d47e-default-rtdb.firebaseio.com/bucketlist/${widget.index}.json");
+      Navigator.pop(context, "refresh");
+    } catch (e) {
+      print("error");
+    }
+  }
+
+  Future<void> markAsComplete() async {
+    try {
+      Map<String, dynamic> data = {"completed": true};
+
+      Response response = await Dio().patch(
+          "https://flutter002-1d47e-default-rtdb.firebaseio.com/bucketlist/${widget.index}.json",
+          data: data);
+      Navigator.pop(context, "refresh");
+    } catch (e) {
+      print("error");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -33,12 +58,14 @@ class _viewItemScreenState extends State<viewItemScreen> {
                               Navigator.pop(context);
                             },
                             child: Text('cancel')),
-                        Text('confirm')
+                        InkWell(onTap: deleteData, child: Text('confirm'))
                       ],
                     );
                   });
             }
-            print(value);
+            if (value == 2) {
+              markAsComplete();
+            }
           }, itemBuilder: (context) {
             return [
               PopupMenuItem(value: 1, child: Text('delete')),
