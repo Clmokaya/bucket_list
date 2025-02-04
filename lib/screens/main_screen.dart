@@ -1,5 +1,5 @@
-import 'package:bucket_list/addBucketList.dart';
-import 'package:bucket_list/viewItem.dart';
+import 'package:bucket_list/screens/add_screen.dart';
+import 'package:bucket_list/screens/view_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/src/widgets/placeholder.dart';

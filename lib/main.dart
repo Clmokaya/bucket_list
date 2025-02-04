@@ -1,5 +1,5 @@
-import 'package:bucket_list/addBucketList.dart';
-import 'package:bucket_list/mainScreen.dart';
+import 'package:bucket_list/screens/add_screen.dart';
+import 'package:bucket_list/screens/main_screen.dart';
 import 'package:flutter/material.dart';
 
 void main() {
